@@ -1,5 +1,0 @@
-fiona
-geopandas
-pandas
-pygeos
-shapely
