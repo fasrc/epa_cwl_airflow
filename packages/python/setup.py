@@ -13,7 +13,9 @@ setup(
     description='Sample CWL Workflow',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    packages=find_packages(),
+    package_dir={
+        "fasrc_sample_tools": "./src/fasrc_sample_tools"
+    },
     install_requires=[
         "fiona",
         "geopandas",

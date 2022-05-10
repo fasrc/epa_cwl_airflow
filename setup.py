@@ -14,9 +14,11 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     packages=find_packages(),
+    dependency_links=["https://github.com/fasrc/epa_cwl_airflow/tree/master/packages/python/setup.py"],
     install_requires=[
         "cwltool",
-        "cwlref-runner"
+        "cwlref-runner",
+        "fasrc_sample_tools"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
