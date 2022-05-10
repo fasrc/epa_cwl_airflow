@@ -1,5 +1,5 @@
 #!/usr/bin/env cwl-runner
-### Python processor example
+### R in-file example
 #  Copyright (c) 2022. Harvard University
 #
 #  Developed by Research Software Engineering,
@@ -21,7 +21,7 @@
 
 cwlVersion: v1.2
 class: CommandLineTool
-baseCommand: [python, '-m', 'fasrc_sample_tools.geo_aggregator']
+baseCommand: [RScript, 'correlate.r']
 
 doc: |
   This tool aggregates values bound to geographic coordinates
@@ -29,28 +29,33 @@ doc: |
 
 requirements:
   InlineJavascriptRequirement: {}
-
+  InitialWorkDirRequirement:
+    listing:
+      - entryname: correlate.r
+        entry: |
+          args <- commandArgs(trailingOnly=TRUE)
+          x <- read.csv(args[1])[, c("ZCTA5CE20", "Value")]
+          y <- read.csv(args[2])[, c("ZCTA5CE20", "Value")]
+          data <- merge(x, y, by = "ZCTA5CE20")
+          print(data)
+          c <- cor(data$Value.x, data$Value.y)
+          print(c)
+          write(paste("Corrleation coefficient = ", c), file="pearson.txt")
 
 inputs:
-  shapes:
-    type: File[]
-    doc: Shape files
+  data1:
+    type: File
+    doc: First series of values
     inputBinding:
       position: 1
-  data:
+  data2:
     type: File
-    doc: JSON file with downloaded data
+    doc: First series of values
     inputBinding:
       position: 2
-  target:
-    type: string
-    doc: A name of the file with the aggregated data
-    inputBinding:
-      position: 3
-
 
 outputs:
-    data:
-      type: File
-      outputBinding:
-        glob: $(inputs.target)
+  result:
+    type: File
+    outputBinding:
+      glob: "pearson.txt"

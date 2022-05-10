@@ -35,6 +35,9 @@ inputs: []
 
 steps:
   get_shapes:
+    doc: |
+      Download zip code shape files for year 2020 from US Census website.
+      Files are downloaded as single zip archive
     run: download.cwl
     in:
       url:
@@ -45,6 +48,7 @@ steps:
       - data
 
   unzip_shapes:
+    doc: Unzip downloaded shape files
     in:
       zip: get_shapes/data
     run:
@@ -69,26 +73,35 @@ steps:
       - shapes
 
   get_co:
+    doc: |
+      Retrieve data for CO air concentration for an area surrounding
+      the city of Cambridge, MA for one day (May 1, 2022) as JSON file
     run: download.cwl
     in:
       url:
-        valueFrom: https://www.airnowapi.org/aq/data/?bbox=-73.0,41.0,-71.0,43.0&startdate=2022-05-01T00&enddate=2022-05-01T12:00&parameters=co&format=application/json&datatype=c&verbose=0&api_key=EB9668CD-B274-4E1B-B3B1-82168A7057E9
+        valueFrom: https://www.airnowapi.org/aq/data/?bbox=-73.0,40.0,-71.0,43.0&startdate=2022-05-01T00&enddate=2022-05-01T12:00&parameters=co&format=application/json&datatype=c&verbose=0&api_key=EB9668CD-B274-4E1B-B3B1-82168A7057E9
       target:
         valueFrom: co.json
     out:
       - data
 
   get_ozone:
+    doc: |
+      Retrieve data for Ozone air concentration for an area surrounding
+      the city of Cambridge, MA for one day (May 1, 2022) as JSON file
     run: download.cwl
     in:
       url:
-        valueFrom: https://www.airnowapi.org/aq/data/?bbox=-73.0,41.0,-71.0,43.0&startdate=2022-05-01T00&enddate=2022-05-01T12:00&parameters=o3&format=application/json&datatype=c&verbose=0&api_key=EB9668CD-B274-4E1B-B3B1-82168A7057E9
+        valueFrom: https://www.airnowapi.org/aq/data/?bbox=-73.0,40.0,-71.0,43.0&startdate=2022-05-01T00&enddate=2022-05-01T12:00&parameters=o3&format=application/json&datatype=c&verbose=0&api_key=EB9668CD-B274-4E1B-B3B1-82168A7057E9
       target:
         valueFrom: ozone.json
     out:
       - data
 
   aggregate_co:
+    doc: |
+      Using shape files, aggregate CO data to ZIP code level, calculating
+      mean vallue in a Python program.
     run: aggregate.cwl
     in:
       shapes:  unzip_shapes/shapes
@@ -99,6 +112,9 @@ steps:
       - data
 
   aggregate_ozone:
+    doc: |
+      Using shape files, aggregate Ozone data to ZIP code level, calculating
+      mean vallue in a Python program.
     run: aggregate.cwl
     in:
       shapes:  unzip_shapes/shapes
@@ -107,6 +123,18 @@ steps:
         valueFrom: ozone.csv
     out:
       - data
+
+  correlate:
+    doc: |
+      Using R script, find Pearson correlation coefficient
+      between CO and Ozone
+    run: correlate.cwl
+    in:
+      data1: aggregate_co/data
+      data2: aggregate_ozone/data
+    out:
+      - result
+
 
 outputs:
 #  shapes:
@@ -124,3 +152,7 @@ outputs:
   ozone:
     type: File
     outputSource: aggregate_ozone/data
+  correlation:
+    type: File
+    outputSource:  correlate/result
+    
