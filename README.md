@@ -53,8 +53,9 @@ Please follow these  steps:
 4. Install geopandas
 5. Install Python dependencies
 6. Create an empty directory and cd there
-7. Run the Workflow
-8. Compare the results with expected results
+7. Look at the workflow graph
+8. Run the Workflow
+9. Compare the results with expected results
 
 Setup Commands:
 
@@ -65,10 +66,16 @@ Setup Commands:
     conda install python=3.8 R  
     conda install geopandas
     pip install -r requirements.txt
-      
-Run the workflow:
+                             
+Generate workflow graph:
 
     export sourceroot=$(pwd)    
+    cwl-runner --print-dot $sourceroot/workflow/cwl/workflow.cwl | dot -Tgif > workflow_graph.gif
+
+Run the workflow:
+
+    export sourceroot=$(pwd)  
+    cd $workdir
     cwl-runner --parallel $sourceroot/workflow/cwl/workflow.cwl
     ls -alF
     cat *
