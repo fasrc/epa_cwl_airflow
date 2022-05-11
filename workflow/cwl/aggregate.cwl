@@ -34,7 +34,7 @@ requirements:
 inputs:
   shapes:
     type: File[]
-    doc: Shape files
+    doc: Shape files that contain zip code shapes
     inputBinding:
       position: 1
   data:

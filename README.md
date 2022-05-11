@@ -1,17 +1,41 @@
 # Sample CWL Workflow
+
+## Introduction
+
+[Common Workflow Language (CWL)](https://www.commonwl.org/) 
+is used to define heterogeneous 
+computational workflows in a way, that ensure reproducibility. 
+Heterogeneous workflows can include steps implemented in 
+different programming languages (we demonstrate Python and R)
+and/or steps performed by calling Unix/Linux command line utilities.
+
+CWL implementations ensure that id a workflow runs on your laptop it will run
+in any other environment, such as HPC slurm cluster and produce exactly 
+the same results (maybe a bit faster).
                         
 ## What this will do
 
 This sample workflow demonstrates how to:
 
-* Download files
-* Manipulate with files (e.g. unizp)
+* Download files, using standard unix/Linux command line utility `curl`.
+    * The goal of this step is to demonstrate reusable CWL command line tool.
+* Manipulate with files (e.g. unizp). 
+    * The goal of this step is to demonstrate using adhoc command line utilities 
 * Process files using Python package
-* Process files using an arbitrary tool, using R
-    script as an example
+    * This step demonstrates how to implement processing in Python
+* Process files using an arbitrary tool, using an R script as an example
+    * This step demonstrates how one can use R, or, in fact any scripting
+      utility, such as `sed` or `awk`.
                         
 > This workflow does not demonstrate an important CWL feature:
-> **_scattering_**. This feature allows to run multiple processes in parallel.
+> **_scattering_**. This feature allows running multiple processes in parallel.
+> 
+> For details, see 
+> [CWL User Guide](https://www.commonwl.org/user_guide/23-scatter-workflow/index.html)
+> and [NSAPH gridMET processing workflow](https://github.com/NSAPH-Data-Platform/nsaph-gridmet/blob/master/src/cwl/gridmet.cwl)
+> that scatters processing over 
+> [parameters (bands)](https://github.com/NSAPH-Data-Platform/nsaph-gridmet/blob/master/src/cwl/gridmet.cwl#L78)
+> and over [years](https://github.com/NSAPH-Data-Platform/nsaph-gridmet/blob/master/src/cwl/gridmet.cwl#L120-L121)
 
 ## Preparation and Setup
 
@@ -30,6 +54,7 @@ Please follow these  steps:
 5. Install Python dependencies
 6. Create an empty directory and cd there
 7. Run the Workflow
+8. Compare the results with expected results
 
 Setup Commands:
 
@@ -44,6 +69,7 @@ Setup Commands:
 Run the workflow:
 
     export sourceroot=$(pwd)    
-    cwl-runner $sourceroot/workflow/cwl/workflow.cwl
+    cwl-runner --parallel $sourceroot/workflow/cwl/workflow.cwl
     ls -alF
     cat *
+    diff -r . $sourceroot/reusults
