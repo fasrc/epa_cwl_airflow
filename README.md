@@ -53,7 +53,7 @@ Please follow these  steps:
 4. Install geopandas
 5. Install Python dependencies
 6. Create an empty directory and cd there
-7. Look at the workflow graph
+7. Look at the workflow graph ([result](workflow_graph.gif))
 8. Run the Workflow
 9. Compare the results with expected results
 
